@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Aerolab · Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--black:#0a0a0a;--white:#f3f2ee;--orange:#FF4D00;--orange2:#ff6929;--dark:#141414;--card:#1a1a1a;--border:#272727;--muted:#5a5a5a;--text:#b0afa9;--font:'DM Sans',sans-serif}
+    body{background:var(--black);color:var(--white);font-family:var(--font);font-weight:300;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:.025;pointer-events:none;z-index:9999}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:22px 52px;border-bottom:1px solid rgba(255,255,255,.05);position:sticky;top:0;z-index:100;background:rgba(10,10,10,.96);backdrop-filter:blur(16px)}
+    .nav-logo{display:flex;align-items:center;gap:10px}
+    .nav-logo-txt{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.07em;color:var(--white)}
+    .nav-logo-txt b{color:var(--orange)}
+    .nav-tag{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);border:1px solid rgba(255,77,0,.3);background:rgba(255,77,0,.07);padding:4px 10px;border-radius:2px}
+    .btn-logout{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:6px 14px;border-radius:2px;cursor:pointer;transition:all .18s}
+    .btn-logout:hover{border-color:var(--orange);color:var(--orange)}
+    .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative}
+    .login-glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 60% 60% at 50% 40%,rgba(255,77,0,.09) 0%,transparent 60%)}
+    .login-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:72px 72px;opacity:.18;mask-image:radial-gradient(ellipse 60% 60% at 50% 50%,black 30%,transparent 100%)}
+    .login-box{position:relative;z-index:1;width:100%;max-width:380px;padding:0 24px}
+    .login-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,8vw,80px);line-height:.9;margin-bottom:8px}
+    .login-title .acc{color:var(--orange)}
+    .login-sub{font-size:13px;color:var(--muted);margin-bottom:36px;line-height:1.6}
+    .form-label{display:block;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:700}
+    .form-input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:2px;padding:12px 14px;color:var(--white);font-family:var(--font);font-size:13px;outline:none;transition:border-color .18s;margin-bottom:16px}
+    .form-input:focus{border-color:var(--orange)}
+    .form-input::placeholder{color:var(--muted)}
+    .btn-full{width:100%;padding:14px;border-radius:2px;border:none;font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;transition:all .18s;letter-spacing:.1em;text-transform:uppercase;background:var(--orange);color:#fff}
+    .btn-full:hover{background:var(--orange2);transform:translateY(-1px);box-shadow:0 8px 24px rgba(255,77,0,.3)}
+    .login-error{font-size:11px;color:#ff5555;margin-top:12px;min-height:16px;letter-spacing:.04em}
+    .dashboard{max-width:1080px;margin:0 auto;padding:52px}
+    .dash-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:40px;padding-bottom:28px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:16px}
+    .dash-title{font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:-.01em;line-height:1}
+    .dash-sub{font-size:12px;color:var(--muted);margin-top:6px;letter-spacing:.04em}
+    .dash-count{font-family:'Bebas Neue',sans-serif;font-size:80px;letter-spacing:-.04em;color:var(--border);line-height:1}
+    .dash-stats{display:flex;gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:44px}
+    .dash-stat{flex:1;background:var(--dark);padding:20px 24px}
+    .dash-stat-n{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--orange);line-height:1}
+    .dash-stat-l{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:3px;font-weight:700}
+    .c-row{border-bottom:1px solid var(--border)}
+    .c-row:first-child{border-top:1px solid var(--border)}
+    .c-summary{display:grid;grid-template-columns:36px 1fr auto 16px;align-items:center;gap:16px;padding:18px 0;cursor:pointer;transition:background .14s}
+    .c-summary:hover{background:rgba(255,255,255,.02)}
+    .c-avatar{width:34px;height:34px;border-radius:2px;background:rgba(255,77,0,.1);border:1px solid rgba(255,77,0,.2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--orange);flex-shrink:0}
+    .c-name{font-weight:700;font-size:13px;margin-bottom:2px}
+    .c-email{font-size:11px;color:var(--muted)}
+    .c-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+    .c-tag{font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+    .expand-arrow{color:var(--muted);font-size:9px;transition:transform .22s;user-select:none}
+    .expand-arrow.open{transform:rotate(180deg)}
+    .badge{display:inline-block;padding:3px 9px;border-radius:2px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:1px solid}
+    .badge-pending{color:var(--muted);border-color:var(--border)}
+    .badge-approved{color:#22c55e;border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.07)}
+    .badge-rejected{color:#ff5555;border-color:rgba(255,85,85,.25);background:rgba(255,85,85,.05)}
+    .c-detail{padding:0 0 28px 50px;display:none}
+    .c-detail.open{display:block}
+    .resp-grid{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:20px;border-radius:2px;overflow:hidden}
+    .resp-block{background:var(--card);padding:18px 20px}
+    .resp-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    .resp-num{width:20px;height:20px;border-radius:2px;background:rgba(255,77,0,.1);border:1px solid rgba(255,77,0,.2);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--orange);flex-shrink:0}
+    .resp-sc-title{font-size:12px;font-weight:700}
+    .resp-sc-tag{margin-left:auto;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+    .resp-transcript{font-size:12px;line-height:1.85;color:var(--text);border-left:2px solid var(--border);padding-left:14px;margin-bottom:10px}
+    .resp-no-data{font-size:11px;color:var(--muted);font-style:italic}
+    .resp-audio-label{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;font-weight:700}
+    .resp-audio{width:100%;accent-color:var(--orange)}
+    .decision-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-top:4px}
+    .decision-label{font-size:9px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;font-weight:700}
+    .btn-d{padding:6px 14px;border-radius:2px;border:1px solid;font-family:var(--font);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;background:transparent;transition:all .15s}
+    .btn-d-approve{color:#22c55e;border-color:rgba(34,197,94,.3)}
+    .btn-d-approve:hover{background:rgba(34,197,94,.08)}
+    .btn-d-reject{color:#ff5555;border-color:rgba(255,85,85,.25)}
+    .btn-d-reject:hover{background:rgba(255,85,85,.06)}
+    .btn-d-pend{color:var(--muted);border-color:var(--border)}
+    .btn-d-pend:hover{border-color:var(--text);color:var(--white)}
+    .empty-state{padding:80px 0;text-align:center}
+    .empty-title{font-family:'Bebas Neue',sans-serif;font-size:52px;color:var(--border);margin-bottom:12px;letter-spacing:-.01em}
+    .empty-desc{font-size:13px;color:var(--muted);line-height:1.7}
+    @media(max-width:640px){.nav{padding:16px 20px}.dashboard{padding:36px 20px}.dash-stats{flex-wrap:wrap}.c-summary{grid-template-columns:32px 1fr 12px}.c-meta{display:none}.c-detail{padding-left:0}}
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="main-nav" style="display:none">
+  <div class="nav-logo">
+    <svg width="22" height="26" viewBox="0 0 22 26" fill="none">
+      <path d="M11 2L21 11L11 17L1 11Z" fill="#FF4D00" opacity=".95"/>
+      <path d="M11 17L9.5 24L11 22L12.5 24Z" fill="#FF4D00" opacity=".4"/>
+      <line x1="11" y1="17" x2="11" y2="24" stroke="#FF4D00" stroke-width="1" opacity=".4"/>
+    </svg>
+    <span class="nav-logo-txt">AERO<b>LAB</b></span>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="nav-tag">Panel Interno</div>
+    <button class="btn-logout" onclick="logout()">Salir</button>
+  </div>
+</nav>
+
+<div id="login-screen">
+  <div class="login-wrap">
+    <div class="login-glow"></div>
+    <div class="login-grid"></div>
+    <div class="login-box">
+      <h1 class="login-title">PANEL<br/><span class="acc">PEOPLE.</span></h1>
+      <p class="login-sub">Acceso restringido al equipo de Aerolab.</p>
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" id="pw-input" placeholder="Ingresa la password" onkeydown="if(event.key==='Enter')tryLogin()"/>
+      <button class="btn-full" onclick="tryLogin()">Entrar &rarr;</button>
+      <p class="login-error" id="login-error"></p>
+    </div>
+  </div>
+</div>
+
+<div id="dashboard-screen" style="display:none">
+  <div id="dashboard-content"></div>
+</div>
+
+<script>
+// *** CAMBIA ESTA PASSWORD ANTES DE SUBIR ***
+const PASSWORD = "hrvivecoding2026";
+
+const SCENARIOS=[
+  {id:1,lang:"es-AR",tag:"Cultura",title:"El proyecto que nadie quiere."},
+  {id:2,lang:"en-US",tag:"Reasoning",title:"The impossible deadline."},
+  {id:3,lang:"es-AR",tag:"Comunicacion",title:"El feedback dificil."},
+  {id:4,lang:"en-US",tag:"Thinking",title:"The inherited mess."}
+];
+
+function tryLogin(){
+  const val=document.getElementById("pw-input").value;
+  if(val===PASSWORD){
+    document.getElementById("login-screen").style.display="none";
+    document.getElementById("main-nav").style.display="flex";
+    document.getElementById("dashboard-screen").style.display="block";
+    renderDashboard();
+  } else {
+    const err=document.getElementById("login-error");
+    err.textContent="Password incorrecta.";
+    document.getElementById("pw-input").value="";
+    setTimeout(()=>err.textContent="",2500);
+  }
+}
+function logout(){
+  document.getElementById("login-screen").style.display="block";
+  document.getElementById("main-nav").style.display="none";
+  document.getElementById("dashboard-screen").style.display="none";
+  document.getElementById("pw-input").value="";
+}
+function getCandidates(){try{return JSON.parse(localStorage.getItem("aero_screening")||"[]")}catch{return[]}}
+function updateDecision(email,decision){const all=getCandidates().map(c=>c.email===email?{...c,decision}:c);localStorage.setItem("aero_screening",JSON.stringify(all))}
+function initials(n){return n.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2)}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function renderDashboard(){
+  const candidates=getCandidates();
+  const approved=candidates.filter(c=>c.decision==="approved").length;
+  const pending=candidates.filter(c=>c.decision==="pending").length;
+  const rejected=candidates.filter(c=>c.decision==="rejected").length;
+  let html='<div class="dashboard"><div class="dash-header"><div><div class="dash-title">CANDIDATOS</div><div class="dash-sub">'+approved+' para entrevistar &middot; '+pending+' pendientes &middot; '+rejected+' descartados</div></div><div class="dash-count">'+String(candidates.length).padStart(2,"0")+'</div></div>';
+  html+='<div class="dash-stats"><div class="dash-stat"><div class="dash-stat-n" style="color:#22c55e">'+approved+'</div><div class="dash-stat-l">Para entrevistar</div></div><div class="dash-stat"><div class="dash-stat-n">'+pending+'</div><div class="dash-stat-l">Pendientes</div></div><div class="dash-stat"><div class="dash-stat-n" style="color:#ff5555">'+rejected+'</div><div class="dash-stat-l">Descartados</div></div><div class="dash-stat"><div class="dash-stat-n" style="color:var(--white)">'+candidates.length+'</div><div class="dash-stat-l">Total</div></div></div>';
+  if(candidates.length===0){
+    html+='<div class="empty-state"><div class="empty-title">SIN CANDIDATOS</div><div class="empty-desc">Todavia no hay candidatos que hayan completado el screening.</div></div>';
+  } else {
+    html+='<div class="candidates-list">';
+    candidates.forEach(function(c,ci){
+      const answered=Object.values(c.responses||{}).filter(Boolean).length;
+      const dec=c.decision||"pending";
+      const decLabel=dec==="approved"?"Entrevistar":dec==="rejected"?"Descartado":"Pendiente";
+      html+='<div class="c-row"><div class="c-summary" onclick="toggleCandidate('+ci+')">';
+      html+='<div class="c-avatar">'+initials(c.name)+'</div>';
+      html+='<div><div class="c-name">'+esc(c.name)+'</div><div class="c-email">'+esc(c.email)+'</div></div>';
+      html+='<div class="c-meta">'+(c.role?'<span class="c-tag">'+esc(c.role)+'</span>':'')+'<span class="c-tag">'+answered+'/'+SCENARIOS.length+' resp.</span><span class="c-tag">'+new Date(c.completedAt).toLocaleDateString("es-AR")+'</span><span class="badge badge-'+dec+'" id="badge-'+ci+'">'+decLabel+'</span></div>';
+      html+='<span class="expand-arrow" id="arrow-'+ci+'">&#9660;</span></div>';
+      html+='<div class="c-detail" id="detail-'+ci+'"><div class="resp-grid">';
+      SCENARIOS.forEach(function(sc,si){
+        const resp=c.responses&&c.responses[sc.id];
+        html+='<div class="resp-block"><div class="resp-header"><div class="resp-num">'+(si+1)+'</div><div class="resp-sc-title">'+esc(sc.title)+'</div><div class="resp-sc-tag">'+esc(sc.tag)+' &middot; '+(sc.lang.startsWith("es")?"ES":"EN")+'</div></div>';
+        if(resp){html+='<div class="resp-transcript">'+(resp.transcript?esc(resp.transcript):'<span class="resp-no-data">Sin transcripcion</span>')+'</div>';if(resp.audioUrl)html+='<div class="resp-audio-label">Audio</div><audio class="resp-audio" controls src="'+resp.audioUrl+'"></audio>';else html+='<div class="resp-no-data">Sin audio</div>';}
+        else html+='<div class="resp-no-data">Sin respuesta</div>';
+        html+='</div>';
+      });
+      html+='</div><div class="decision-row"><span class="decision-label">Decision:</span>';
+      html+='<button class="btn-d btn-d-approve" onclick="setDecision(\''+esc(c.email)+'\',\'approved\','+ci+')">&#10003; Entrevistar</button>';
+      html+='<button class="btn-d btn-d-reject" onclick="setDecision(\''+esc(c.email)+'\',\'rejected\','+ci+')">&#10007; Descartar</button>';
+      html+='<button class="btn-d btn-d-pend" onclick="setDecision(\''+esc(c.email)+'\',\'pending\','+ci+')">&#8212; Pendiente</button>';
+      html+='</div></div></div>';
+    });
+    html+='</div>';
+  }
+  html+='</div>';
+  document.getElementById("dashboard-content").innerHTML=html;
+}
+function toggleCandidate(ci){document.getElementById("detail-"+ci).classList.toggle("open");document.getElementById("arrow-"+ci).classList.toggle("open")}
+function setDecision(email,decision,ci){updateDecision(email,decision);renderDashboard()}
+</script>
+</body>
+</html>
