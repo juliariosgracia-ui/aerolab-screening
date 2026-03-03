@@ -1,326 +1,146 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Aerolab · Pre-screening</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet"/>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #ffffff;
-      --surface: #f5f5f3;
-      --surface2: #ebebeb;
-      --border: rgba(0,0,0,0.1);
-      --border-strong: rgba(0,0,0,0.25);
-      --black: #0a0a0a;
-      --muted: #888888;
-      --muted2: #cccccc;
-      --font: 'Inter', sans-serif;
-      --font-serif: 'Playfair Display', serif;
-    }
-    body { background: var(--bg); color: var(--black); font-family: var(--font); -webkit-font-smoothing: antialiased; }
-    .app { min-height: 100vh; }
-
-    /* NAV */
-    .nav { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 2rem; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.97); backdrop-filter: blur(16px); }
-    .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.08em; color: var(--black); line-height: 1; }
-    .nav-tabs { display: flex; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
-    .nav-tab { padding: 0.42rem 1rem; border: none; background: transparent; color: var(--muted); font-family: var(--font); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em; cursor: pointer; transition: all 0.18s; text-transform: uppercase; border-right: 1px solid var(--border); }
-    .nav-tab:last-child { border-right: none; }
-    .nav-tab:hover { color: var(--black); background: var(--surface); }
-    .nav-tab.active { background: var(--black); color: #fff; }
-
-    .view { display: none; }
-    .view.active { display: block; }
-
-    /* CANDIDATE */
-    .candidate-view { max-width: 640px; margin: 0 auto; padding: 4rem 1.5rem; }
-    .progress-bar { height: 1px; background: var(--surface2); margin-bottom: 3.5rem; position: relative; }
-    .progress-fill { height: 100%; background: var(--black); transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
-    .progress-label { position: absolute; right: 0; top: -1.4rem; font-size: 0.58rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
-    .eyebrow { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.5rem; font-weight: 600; }
-    .page-title { font-family: var(--font-serif); font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 700; line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 1.5rem; }
-    .page-title em { font-style: italic; color: var(--muted); }
-    .page-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.8; max-width: 460px; margin-bottom: 2.5rem; font-weight: 400; }
-    .meta-row { display: flex; gap: 0.5rem; margin-bottom: 2.75rem; flex-wrap: wrap; }
-    .meta-pill { border: 1px solid var(--border); border-radius: 100px; padding: 0.28rem 0.85rem; font-size: 0.67rem; color: var(--muted); letter-spacing: 0.03em; font-weight: 500; }
-    .divider { border: none; border-top: 1px solid var(--border); margin: 2.25rem 0; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem; }
-    .form-group { margin-bottom: 1.25rem; }
-    .form-label { display: block; font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.55rem; font-weight: 700; }
-    .form-input { width: 100%; background: transparent; border: 1px solid var(--border); border-radius: 4px; padding: 0.78rem 1rem; color: var(--black); font-family: var(--font); font-size: 0.84rem; outline: none; transition: border-color 0.18s; }
-    .form-input:focus { border-color: var(--border-strong); }
-    .form-input::placeholder { color: var(--muted2); }
-
-    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 2rem; border-radius: 4px; border: none; font-family: var(--font); font-size: 0.73rem; font-weight: 700; cursor: pointer; transition: all 0.18s; letter-spacing: 0.07em; text-transform: uppercase; }
-    .btn-primary { background: var(--black); color: #fff; }
-    .btn-primary:hover { background: #222; transform: translateY(-1px); }
-    .btn-primary:disabled { opacity: 0.2; cursor: not-allowed; transform: none; }
-    .btn-ghost { background: transparent; color: var(--muted); padding: 0.85rem 0.25rem; border: none; font-family: var(--font); font-size: 0.73rem; font-weight: 700; cursor: pointer; letter-spacing: 0.07em; text-transform: uppercase; transition: color 0.18s; }
-    .btn-ghost:hover { color: var(--black); }
-    .btn-danger { background: transparent; color: #cc0000; border: 1px solid rgba(200,0,0,0.2); font-family: var(--font); font-size: 0.73rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; cursor: pointer; transition: all 0.18s; padding: 0.85rem 2rem; border-radius: 4px; display: inline-flex; align-items: center; }
-    .btn-danger:hover { background: rgba(200,0,0,0.05); }
-
-    /* SCENARIO */
-    .scenario-section-label { font-size: 0.6rem; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; margin-bottom: 1.75rem; }
-    .scenario-section-label span { margin-left: 0.75rem; border: 1px solid var(--border); border-radius: 100px; padding: 0.18rem 0.65rem; font-size: 0.58rem; }
-    .scenario-title { font-family: var(--font-serif); font-size: clamp(1.75rem, 4vw, 2.6rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 1.75rem; }
-    .scenario-situation { border-left: 2px solid var(--border-strong); padding-left: 1.25rem; font-size: 0.85rem; line-height: 1.85; color: var(--muted); margin-bottom: 1.75rem; }
-    .scenario-prompt { font-size: 0.9rem; color: var(--black); font-weight: 600; margin-bottom: 2rem; }
-    .scenario-actions { display: flex; align-items: center; justify-content: space-between; margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 1rem; }
-
-    /* RECORDER */
-    .recorder { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: var(--surface); }
-    .recorder-top { padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--border); background: #fff; flex-wrap: wrap; }
-    .rec-status { display: flex; align-items: center; gap: 0.55rem; font-size: 0.65rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; }
-    .rec-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted2); flex-shrink: 0; transition: background 0.3s; }
-    .rec-dot.live { background: #cc0000; animation: blink 1.1s ease-in-out infinite; }
-    .rec-dot.ok { background: #008844; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
-    .recorder-controls { display: flex; gap: 0.5rem; }
-    .recorder-body { padding: 1.25rem; }
-    .transcript-label { font-size: 0.56rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem; font-weight: 700; }
-    .transcript-box { min-height: 72px; font-size: 0.84rem; line-height: 1.75; color: var(--black); }
-    .transcript-empty { color: var(--muted2); font-style: italic; }
-    .audio-wrap { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
-    .audio-label { font-size: 0.56rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; font-weight: 700; }
-    .audio-player { width: 100%; accent-color: var(--black); }
-
-    /* DONE */
-    .done-view { padding-top: 4rem; }
-    .done-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 1.5rem; }
-    .done-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.8; max-width: 420px; }
-
-    /* DASHBOARD */
-    .dashboard { max-width: 1080px; margin: 0 auto; padding: 3rem 2rem; }
-    .dash-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 2.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 1rem; }
-    .dash-title { font-family: var(--font-serif); font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; }
-    .dash-sub { font-size: 0.72rem; color: var(--muted); margin-top: 0.3rem; }
-    .dash-count { font-family: var(--font-serif); font-size: 3.5rem; font-weight: 700; letter-spacing: -0.05em; color: var(--muted2); line-height: 1; }
-    .c-row { border-bottom: 1px solid var(--border); }
-    .c-row:first-child { border-top: 1px solid var(--border); }
-    .c-summary { display: grid; grid-template-columns: 2.25rem 1fr auto 1rem; align-items: center; gap: 1.25rem; padding: 1.25rem 0; cursor: pointer; }
-    .c-avatar { width: 34px; height: 34px; border-radius: 4px; background: var(--surface2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; color: var(--muted); }
-    .c-name { font-weight: 700; font-size: 0.88rem; margin-bottom: 0.12rem; }
-    .c-email { font-size: 0.7rem; color: var(--muted); }
-    .c-meta { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
-    .c-tag { font-size: 0.6rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
-    .expand-arrow { color: var(--muted2); font-size: 0.6rem; transition: transform 0.22s; user-select: none; }
-    .expand-arrow.open { transform: rotate(180deg); }
-    .badge { display: inline-block; padding: 0.18rem 0.6rem; border-radius: 100px; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid; }
-    .badge-pending { color: var(--muted); border-color: var(--border); }
-    .badge-approved { color: #008844; border-color: rgba(0,136,68,0.3); background: rgba(0,136,68,0.04); }
-    .badge-rejected { color: #cc0000; border-color: rgba(200,0,0,0.2); background: rgba(200,0,0,0.03); }
-    .c-detail { padding: 0 0 2rem 3.5rem; display: none; }
-    .c-detail.open { display: block; }
-    .resp-grid { display: flex; flex-direction: column; gap: 1px; background: var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 1.5rem; }
-    .resp-block { background: #fff; padding: 1.1rem 1.25rem; }
-    .resp-header { display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.65rem; }
-    .resp-num { width: 18px; height: 18px; border-radius: 3px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 0.55rem; font-weight: 700; color: var(--muted); flex-shrink: 0; }
-    .resp-sc-title { font-size: 0.78rem; font-weight: 700; }
-    .resp-sc-tag { margin-left: auto; font-size: 0.56rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
-    .resp-transcript { font-size: 0.8rem; line-height: 1.8; color: var(--muted); border-left: 2px solid var(--border-strong); padding-left: 0.9rem; margin-bottom: 0.65rem; }
-    .resp-no-data { font-size: 0.72rem; color: var(--muted2); font-style: italic; }
-    .resp-audio-label { font-size: 0.56rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.35rem; font-weight: 700; }
-    .resp-audio { width: 100%; accent-color: var(--black); }
-    .decision-row { display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap; }
-    .decision-label { font-size: 0.6rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; }
-    .btn-d { padding: 0.32rem 0.85rem; border-radius: 3px; border: 1px solid; font-family: var(--font); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; background: transparent; transition: all 0.15s; }
-    .btn-d-approve { color: #008844; border-color: rgba(0,136,68,0.3); }
-    .btn-d-approve:hover { background: rgba(0,136,68,0.06); }
-    .btn-d-reject { color: #cc0000; border-color: rgba(200,0,0,0.2); }
-    .btn-d-reject:hover { background: rgba(200,0,0,0.04); }
-    .btn-d-pend { color: var(--muted); border-color: var(--border); }
-    .btn-d-pend:hover { border-color: var(--border-strong); color: var(--black); }
-    .empty-state { padding: 5rem 0; }
-    .empty-title { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; color: var(--muted2); margin-bottom: 0.75rem; }
-    .empty-desc { font-size: 0.82rem; color: var(--muted2); line-height: 1.7; }
-    @media (max-width: 600px) {
-      .nav { padding: 1rem; }
-      .form-row { grid-template-columns: 1fr; }
-      .c-summary { grid-template-columns: 2rem 1fr 1rem; }
-      .c-meta { display: none; }
-      .c-detail { padding-left: 0; }
-      .dashboard { padding: 2rem 1rem; }
-    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--black:#0a0a0a;--white:#f3f2ee;--orange:#FF4D00;--orange2:#ff6929;--dark:#141414;--card:#1a1a1a;--border:#272727;--muted:#5a5a5a;--text:#b0afa9;--font:'DM Sans',sans-serif}
+    body{background:var(--black);color:var(--white);font-family:var(--font);font-weight:300;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:.025;pointer-events:none;z-index:9999}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:22px 52px;border-bottom:1px solid rgba(255,255,255,.05);position:sticky;top:0;z-index:100;background:rgba(10,10,10,.96);backdrop-filter:blur(16px)}
+    .nav-logo{display:flex;align-items:center;gap:10px}
+    .nav-logo-txt{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.07em;color:var(--white)}
+    .nav-logo-txt b{color:var(--orange)}
+    .nav-tag{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);border:1px solid var(--border);padding:4px 10px;border-radius:2px}
+    .candidate-view{max-width:620px;margin:0 auto;padding:72px 24px 80px}
+    .hero-wrap{margin:-72px -24px 0;padding:80px 24px 64px;position:relative;overflow:hidden}
+    .hero-glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 80% 60% at 70% 30%,rgba(255,77,0,.11) 0%,transparent 60%)}
+    .hero-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:72px 72px;opacity:.2;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%)}
+    .progress-wrap{margin-bottom:48px}
+    .progress-bar{height:1px;background:var(--border);position:relative}
+    .progress-fill{height:100%;background:var(--orange);transition:width .5s cubic-bezier(.4,0,.2,1)}
+    .progress-label{position:absolute;right:0;top:-18px;font-size:9px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;font-weight:700}
+    .eyebrow{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--orange);margin-bottom:20px;font-weight:700;display:flex;align-items:center;gap:10px}
+    .eyebrow::before{content:'';width:24px;height:1px;background:var(--orange)}
+    .page-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(64px,11vw,130px);line-height:.88;letter-spacing:-.01em;margin-bottom:24px;position:relative;z-index:1}
+    .page-title .acc{color:var(--orange)}
+    .page-title .ghost{-webkit-text-stroke:1.5px rgba(255,255,255,.16);color:transparent}
+    .page-desc{font-size:14px;color:var(--text);line-height:1.8;max-width:440px;margin-bottom:28px}
+    .meta-row{display:flex;gap:8px;margin-bottom:40px;flex-wrap:wrap}
+    .meta-pill{border:1px solid var(--border);border-radius:2px;padding:5px 13px;font-size:10px;color:var(--muted);letter-spacing:.06em;font-weight:600;text-transform:uppercase}
+    .divider{border:none;border-top:1px solid var(--border);margin:28px 0}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+    .form-group{margin-bottom:16px}
+    .form-label{display:block;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:700}
+    .form-input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:2px;padding:12px 14px;color:var(--white);font-family:var(--font);font-size:13px;outline:none;transition:border-color .18s}
+    .form-input:focus{border-color:var(--orange)}
+    .form-input::placeholder{color:var(--muted)}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:2px;border:none;font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;transition:all .18s;letter-spacing:.1em;text-transform:uppercase}
+    .btn-primary{background:var(--orange);color:#fff}
+    .btn-primary:hover{background:var(--orange2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,77,0,.3)}
+    .btn-primary:disabled{opacity:.22;cursor:not-allowed;transform:none;box-shadow:none}
+    .btn-ghost{background:transparent;color:var(--muted);padding:14px 4px;border:none;font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.1em;text-transform:uppercase;transition:color .18s}
+    .btn-ghost:hover{color:var(--white)}
+    .btn-danger{background:transparent;color:#ff5555;border:1px solid rgba(255,85,85,.25);font-family:var(--font);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .18s;padding:14px 28px;border-radius:2px;display:inline-flex;align-items:center}
+    .btn-danger:hover{background:rgba(255,85,85,.07)}
+    .scenario-tag{font-size:10px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+    .scenario-tag-pill{border:1px solid rgba(255,77,0,.3);border-radius:2px;padding:3px 10px;font-size:9px;color:var(--orange);background:rgba(255,77,0,.07)}
+    .scenario-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,7vw,72px);letter-spacing:-.01em;line-height:.94;margin-bottom:26px}
+    .scenario-situation{border-left:2px solid rgba(255,255,255,.1);padding-left:18px;font-size:14px;line-height:1.85;color:var(--text);margin-bottom:22px}
+    .scenario-prompt{font-size:14px;color:var(--white);font-weight:600;margin-bottom:28px;padding:16px 20px;border:1px solid rgba(255,77,0,.22);background:rgba(255,77,0,.05);border-radius:2px;line-height:1.6}
+    .scenario-prompt::before{content:'-> ';color:var(--orange)}
+    .scenario-actions{display:flex;align-items:center;justify-content:space-between;margin-top:32px;padding-top:28px;border-top:1px solid var(--border);flex-wrap:wrap;gap:12px}
+    .recorder{border:1px solid var(--border);border-radius:2px;overflow:hidden;background:var(--dark)}
+    .recorder-top{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--border);background:var(--card);flex-wrap:wrap}
+    .rec-status{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;font-weight:700}
+    .rec-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:background .3s}
+    .rec-dot.live{background:#ff4444;animation:blink 1.1s ease-in-out infinite}
+    .rec-dot.ok{background:#22c55e}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+    .recorder-controls{display:flex;gap:8px}
+    .recorder-body{padding:20px}
+    .transcript-label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:700}
+    .transcript-box{min-height:72px;font-size:13px;line-height:1.8;color:var(--white)}
+    .transcript-empty{color:var(--muted);font-style:italic}
+    .audio-wrap{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+    .audio-label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-weight:700}
+    .audio-player{width:100%;accent-color:var(--orange)}
+    .done-view{padding-top:52px}
+    .done-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,9vw,108px);letter-spacing:-.01em;line-height:.9;margin-bottom:24px}
+    .done-title .acc{color:var(--orange)}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    .fade-in{animation:fadeUp .5s both}
+    @media(max-width:640px){.nav{padding:16px 20px}.candidate-view{padding:48px 20px 60px}.hero-wrap{margin:-48px -20px 0;padding:60px 20px 48px}.form-row{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-<div class="app">
-  <nav class="nav">
-    <div class="nav-logo">Aerolab</div>
-    <div class="nav-tabs">
-      <button class="nav-tab active" id="tab-candidate" onclick="switchView('candidate')">Candidato</button>
-      <button class="nav-tab" id="tab-dashboard" onclick="switchView('dashboard')">Panel</button>
-    </div>
-  </nav>
-  <div class="view active" id="view-candidate">
-    <div class="candidate-view" id="candidate-content"></div>
+<nav class="nav">
+  <div class="nav-logo">
+    <svg width="22" height="26" viewBox="0 0 22 26" fill="none">
+      <path d="M11 2L21 11L11 17L1 11Z" fill="#FF4D00" opacity=".95"/>
+      <path d="M11 17L9.5 24L11 22L12.5 24Z" fill="#FF4D00" opacity=".4"/>
+      <line x1="11" y1="17" x2="11" y2="24" stroke="#FF4D00" stroke-width="1" opacity=".4"/>
+    </svg>
+    <span class="nav-logo-txt">AERO<b>LAB</b></span>
   </div>
-  <div class="view" id="view-dashboard">
-    <div id="dashboard-content"></div>
-  </div>
-</div>
+  <div class="nav-tag">Pre-screening</div>
+</nav>
+<div class="candidate-view" id="candidate-content"></div>
 <script>
-const SCENARIOS = [
-  { id: 1, lang: "es-AR", tag: "Cultura", title: "El proyecto que nadie quiere.", situation: "Sos parte de un equipo y hay una tarea crítica pero tediosa que nadie quiere tomar. Tu manager no la asignó explícitamente. El deadline es en 3 días.", prompt: "¿Qué hacés? Contanos cómo lo manejás." },
-  { id: 2, lang: "en-US", tag: "Reasoning", title: "The impossible deadline.", situation: "Your team lead asks you to deliver a feature by Friday. It's Wednesday. After reviewing the scope, you realize it's technically impossible to do it well in that timeframe — but doable if you cut major corners.", prompt: "Walk us through how you handle this conversation and decision." },
-  { id: 3, lang: "es-AR", tag: "Comunicación", title: "El feedback difícil.", situation: "Un compañero entregó algo que está por debajo del estándar. Es alguien con quien tenés buena relación, pero en este proyecto el output tiene que ser de alta calidad.", prompt: "¿Cómo le das el feedback? Contanos qué le decís y cómo lo encarás." },
-  { id: 4, lang: "en-US", tag: "Thinking", title: "The inherited mess.", situation: You join a project mid-way and discover it's significantly more chaotic than described — unclear ownership, misaligned expectations, and a team that's been navigating the mess for months.", prompt: "What would you do? And how would you start proposing improvements without breaking what's already in motion?" }
+const SCENARIOS=[
+  {id:1,lang:"es-AR",tag:"Cultura",title:"El proyecto que nadie quiere.",situation:"Sos parte de un equipo y hay una tarea critica pero tediosa que nadie quiere tomar. Tu manager no la asigno explicitamente. El deadline es en 3 dias.",prompt:"Que haces? Contanos como lo manejas."},
+  {id:2,lang:"en-US",tag:"Reasoning",title:"The impossible deadline.",situation:"Your team lead asks you to deliver a feature by Friday. It's Wednesday. After reviewing the scope, you realize it's technically impossible to do it well in that timeframe - but doable if you cut major corners.",prompt:"Walk us through how you handle this conversation and decision."},
+  {id:3,lang:"es-AR",tag:"Comunicacion",title:"El feedback dificil.",situation:"Un companero entrego algo que esta por debajo del estandar. Es alguien con quien tenes buena relacion, pero en este proyecto el output tiene que ser de alta calidad.",prompt:"Como le das el feedback? Contanos que le dices y como lo encares."},
+  {id:4,lang:"en-US",tag:"Thinking",title:"The inherited mess.",situation:"You join a project mid-way and discover it's significantly more chaotic than described - unclear ownership, misaligned expectations, and a team that's been navigating the mess for months.",prompt:"What would you do? And how would you start proposing improvements without breaking what's already in motion?"}
 ];
-
-let state = { step:"welcome", name:"", email:"", role:"", idx:0, responses:{}, mediaRecorder:null, recognition:null, timer:null, elapsed:0, recording:false, currentTranscript:"", currentAudioUrl:null };
-
-function getCandidates() { try { return JSON.parse(localStorage.getItem("aero_screening")||"[]"); } catch { return []; } }
-function saveCandidate(c) { const all=getCandidates().filter(x=>x.email!==c.email); all.push(c); localStorage.setItem("aero_screening",JSON.stringify(all)); }
-function updateDecision(email,decision) { const all=getCandidates().map(c=>c.email===email?{...c,decision}:c); localStorage.setItem("aero_screening",JSON.stringify(all)); }
-function initials(n) { return n.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2); }
-function fmt(s) { return `${Math.floor(s/60).toString().padStart(2,"0")}:${(s%60).toString().padStart(2,"0")}`; }
-function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
-
-function switchView(v) {
-  document.querySelectorAll(".view").forEach(el=>el.classList.remove("active"));
-  document.querySelectorAll(".nav-tab").forEach(el=>el.classList.remove("active"));
-  document.getElementById("view-"+v).classList.add("active");
-  document.getElementById("tab-"+v).classList.add("active");
-  if(v==="dashboard") renderDashboard();
-  updateTabCount();
+let state={step:"welcome",name:"",email:"",role:"",idx:0,responses:{},mediaRecorder:null,recognition:null,timer:null,elapsed:0,recording:false,currentTranscript:"",currentAudioUrl:null};
+function getCandidates(){try{return JSON.parse(localStorage.getItem("aero_screening")||"[]")}catch{return[]}}
+function saveCandidate(c){const all=getCandidates().filter(x=>x.email!==c.email);all.push(c);localStorage.setItem("aero_screening",JSON.stringify(all))}
+function fmt(s){return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function render(){const el=document.getElementById("candidate-content");if(state.step==="welcome")el.innerHTML=renderWelcome();else if(state.step==="scenario")el.innerHTML=renderScenario();else el.innerHTML=renderDone()}
+function renderWelcome(){
+  return '<div class="hero-wrap"><div class="hero-glow"></div><div class="hero-grid"></div><p class="eyebrow fade-in" style="position:relative;z-index:1;animation-delay:.1s">Aerolab Pre-screening</p><h1 class="page-title fade-in" style="animation-delay:.2s">CONTANOS<br/>COMO <span class="acc">PENSAS.</span><br/><span class="ghost">EN SERIO.</span></h1></div>'
+  +'<p class="page-desc" style="margin-top:36px">No hay respuestas correctas. Hay '+SCENARIOS.length+' situaciones reales. Graba tu respuesta en voz. Habla como si le estuvieras contando a un colega.</p>'
+  +'<div class="meta-row"><div class="meta-pill">Voz</div><div class="meta-pill">~15 min</div><div class="meta-pill">ES + EN</div><div class="meta-pill">'+SCENARIOS.length+' situaciones</div></div>'
+  +'<hr class="divider"/><div class="form-row">'
+  +'<div class="form-group" style="margin:0"><label class="form-label">Nombre</label><input class="form-input" placeholder="Tu nombre completo" value="'+esc(state.name)+'" oninput="state.name=this.value;updateStartBtn()"/></div>'
+  +'<div class="form-group" style="margin:0"><label class="form-label">Email</label><input class="form-input" type="email" placeholder="tu@email.com" value="'+esc(state.email)+'" oninput="state.email=this.value;updateStartBtn()"/></div></div>'
+  +'<div class="form-group"><label class="form-label">Rol al que aplicas</label><input class="form-input" placeholder="ej: Product Designer" value="'+esc(state.role)+'" oninput="state.role=this.value"/></div>'
+  +'<div style="margin-top:28px"><button class="btn btn-primary" id="btn-start" onclick="startScreening()" '+(!state.name.trim()||!state.email.trim()?"disabled":"")+'>Empezar &rarr;</button></div>';
 }
-function updateTabCount() { const n=getCandidates().length; document.getElementById("tab-dashboard").textContent=n>0?`Panel · ${n}`:"Panel"; }
-
-function render() {
-  const el=document.getElementById("candidate-content");
-  if(state.step==="welcome") el.innerHTML=renderWelcome();
-  else if(state.step==="scenario") el.innerHTML=renderScenario();
-  else el.innerHTML=renderDone();
-}
-
-function renderWelcome() {
-  return `
-    <div class="eyebrow">Aerolab · Pre-screening</div>
-    <h1 class="page-title">Contanos<br/>cómo <em>pensás.</em></h1>
-    <p class="page-desc">No hay respuestas correctas. Hay ${SCENARIOS.length} situaciones reales — las mismas que te vas a encontrar si entrás a Aerolab. Grabá tu respuesta en voz. Hablá como si le estuvieras contando a un colega.</p>
-    <div class="meta-row"><div class="meta-pill">🎙 Voz</div><div class="meta-pill">⏱ ~15 min</div><div class="meta-pill">🌐 ES + EN</div></div>
-    <hr class="divider" />
-    <div class="form-row">
-      <div class="form-group" style="margin:0"><label class="form-label">Nombre</label><input class="form-input" placeholder="Tu nombre completo" value="${esc(state.name)}" oninput="state.name=this.value;updateStartBtn()" /></div>
-      <div class="form-group" style="margin:0"><label class="form-label">Email</label><input class="form-input" type="email" placeholder="tu@email.com" value="${esc(state.email)}" oninput="state.email=this.value;updateStartBtn()" /></div>
-    </div>
-    <div class="form-group"><label class="form-label">Rol al que aplicás</label><input class="form-input" placeholder="ej: Product Designer" value="${esc(state.role)}" oninput="state.role=this.value" /></div>
-    <div style="margin-top:2rem"><button class="btn btn-primary" id="btn-start" onclick="startScreening()" ${!state.name.trim()||!state.email.trim()?"disabled":""}>Empezar →</button></div>`;
-}
-
-function updateStartBtn() { const b=document.getElementById("btn-start"); if(b) b.disabled=!state.name.trim()||!state.email.trim(); }
-
-function renderScenario() {
-  const sc=SCENARIOS[state.idx];
-  const resp=state.responses[sc.id];
-  const hasResp=resp&&(resp.transcript||resp.audioUrl);
+function updateStartBtn(){const b=document.getElementById("btn-start");if(b)b.disabled=!state.name.trim()||!state.email.trim()}
+function renderScenario(){
+  const sc=SCENARIOS[state.idx],resp=state.responses[sc.id],hasResp=resp&&(resp.transcript||resp.audioUrl);
   const recState=state.recording?"recording":(state.currentAudioUrl||(resp&&resp.audioUrl))?"done":"idle";
-  const transcript=state.currentTranscript||(resp?resp.transcript:"");
-  const audioUrl=state.currentAudioUrl||(resp?resp.audioUrl:null);
-  const es=sc.lang.startsWith("es");
-  return `
-    <div class="progress-bar"><div class="progress-fill" style="width:${(state.idx/SCENARIOS.length)*100}%"></div><span class="progress-label">${state.idx+1} / ${SCENARIOS.length}</span></div>
-    <div class="scenario-section-label">0${state.idx+1} — ${es?"Situación":"Situation"}<span>${esc(sc.tag)}</span><span style="margin-left:0.4rem;font-size:0.56rem;color:var(--muted2)">${es?"ES":"EN"}</span></div>
-    <h2 class="scenario-title">${esc(sc.title)}</h2>
-    <div class="scenario-situation">${esc(sc.situation)}</div>
-    <p class="scenario-prompt">→ ${esc(sc.prompt)}</p>
-    <div class="recorder">
-      <div class="recorder-top">
-        <div class="rec-status"><div class="rec-dot ${recState==="recording"?"live":recState==="done"?"ok":""}"></div><span id="rec-label">${recState==="idle"?(es?"Listo para grabar":"Ready to record"):recState==="recording"?(es?"Grabando · ":"Recording · ")+fmt(state.elapsed):(es?"Grabación completa":"Recording complete")}</span></div>
-        <div class="recorder-controls">
-          ${recState==="idle"?`<button class="btn btn-primary" onclick="startRecording()">${es?"Grabar":"Record"}</button>`:""}
-          ${recState==="recording"?`<button class="btn btn-danger" onclick="stopRecording()">${es?"Detener":"Stop"}</button>`:""}
-          ${recState==="done"?`<button class="btn btn-ghost" onclick="resetRecording()">↺ ${es?"Volver a grabar":"Re-record"}</button>`:""}
-        </div>
-      </div>
-      <div class="recorder-body">
-        <div class="transcript-label">${es?"Transcripción en vivo":"Live transcription"}</div>
-        <div class="transcript-box" id="transcript-box">${transcript?esc(transcript):`<span class="transcript-empty">${recState==="recording"?(es?"Escuchando…":"Listening…"):(es?"El texto va a aparecer acá mientras hablás.":"Text will appear here as you speak.")}</span>`}</div>
-        ${audioUrl?`<div class="audio-wrap"><div class="audio-label">${es?"Audio bruto":"Raw audio"}</div><audio class="audio-player" controls src="${audioUrl}"></audio></div>`:""}
-      </div>
-    </div>
-    <div class="scenario-actions">
-      <div>${state.idx>0?`<button class="btn btn-ghost" onclick="prevScenario()">← ${es?"Anterior":"Back"}</button>`:""}</div>
-      <button class="btn btn-primary" onclick="nextScenario()" ${!hasResp&&!state.currentAudioUrl?"disabled":""}>${state.idx<SCENARIOS.length-1?(es?"Siguiente →":"Next →"):(es?"Enviar ✓":"Submit ✓")}</button>
-    </div>`;
+  const transcript=state.currentTranscript||(resp?resp.transcript:""),audioUrl=state.currentAudioUrl||(resp?resp.audioUrl:null),es=sc.lang.startsWith("es");
+  let h='<div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:'+(state.idx/SCENARIOS.length*100)+'%"></div><span class="progress-label">'+(state.idx+1)+' / '+SCENARIOS.length+'</span></div></div>';
+  h+='<div class="scenario-tag"><span>0'+(state.idx+1)+'</span><span class="scenario-tag-pill">'+esc(sc.tag)+'</span><span style="font-size:9px;color:var(--muted)">'+(es?"ES":"EN")+'</span></div>';
+  h+='<h2 class="scenario-title">'+esc(sc.title)+'</h2><div class="scenario-situation">'+esc(sc.situation)+'</div><p class="scenario-prompt">'+esc(sc.prompt)+'</p>';
+  const rl=recState==="idle"?(es?"Listo para grabar":"Ready to record"):recState==="recording"?(es?"Grabando · ":"Recording · ")+fmt(state.elapsed):(es?"Grabacion completa":"Recording complete");
+  h+='<div class="recorder"><div class="recorder-top"><div class="rec-status"><div class="rec-dot'+(recState==="recording"?" live":recState==="done"?" ok":"")+'"></div><span id="rec-label">'+rl+'</span></div><div class="recorder-controls">';
+  if(recState==="idle")h+='<button class="btn btn-primary" onclick="startRecording()">'+(es?"Grabar":"Record")+'</button>';
+  if(recState==="recording")h+='<button class="btn btn-danger" onclick="stopRecording()">'+(es?"Detener":"Stop")+'</button>';
+  if(recState==="done")h+='<button class="btn btn-ghost" onclick="resetRecording()">'+(es?"Volver a grabar":"Re-record")+'</button>';
+  h+='</div></div><div class="recorder-body"><div class="transcript-label">'+(es?"Transcripcion en vivo":"Live transcription")+'</div>';
+  h+='<div class="transcript-box" id="transcript-box">'+(transcript?esc(transcript):'<span class="transcript-empty">'+(recState==="recording"?(es?"Escuchando...":"Listening..."):(es?"El texto va a aparecer aca mientras hablas.":"Text will appear here as you speak."))+'</span>')+'</div>';
+  if(audioUrl)h+='<div class="audio-wrap"><div class="audio-label">Audio</div><audio class="audio-player" controls src="'+audioUrl+'"></audio></div>';
+  h+='</div></div><div class="scenario-actions"><div>'+(state.idx>0?'<button class="btn btn-ghost" onclick="prevScenario()">&larr; '+(es?"Anterior":"Back")+'</button>':"")+'</div>';
+  h+='<button class="btn btn-primary" onclick="nextScenario()" '+(!hasResp&&!state.currentAudioUrl?"disabled":"")+'>'+(state.idx<SCENARIOS.length-1?(es?"Siguiente &rarr;":"Next &rarr;"):(es?"Enviar &#10003;":"Submit &#10003;"))+'</button></div>';
+  return h;
 }
-
-function renderDone() {
-  return `<div class="done-view"><div class="eyebrow" style="margin-bottom:2rem">Aerolab · Pre-screening</div><h2 class="done-title">Gracias,<br/>${esc(state.name.split(" ")[0])}.</h2><p class="done-desc" style="margin-top:1.5rem">Recibimos tus respuestas. Las vamos a revisar y te contactamos pronto para contarte los próximos pasos.</p></div>`;
-}
-
-function startScreening() { state.step="scenario"; state.idx=0; state.currentTranscript=""; state.currentAudioUrl=null; render(); }
-function saveCurrentResponse() { const sc=SCENARIOS[state.idx]; if(state.currentAudioUrl||state.currentTranscript) state.responses[sc.id]={transcript:state.currentTranscript,audioUrl:state.currentAudioUrl}; }
-function prevScenario() { saveCurrentResponse(); state.idx--; state.currentTranscript=""; state.currentAudioUrl=null; render(); }
-function nextScenario() {
-  saveCurrentResponse();
-  if(state.idx<SCENARIOS.length-1){ state.idx++; state.currentTranscript=""; state.currentAudioUrl=null; render(); }
-  else { saveCandidate({name:state.name,email:state.email,role:state.role,responses:state.responses,completedAt:new Date().toISOString(),decision:"pending"}); state.step="done"; render(); updateTabCount(); }
-}
-
-async function startRecording() {
-  try {
-    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-    const mr=new MediaRecorder(stream);
-    const chunks=[];
-    mr.ondataavailable=e=>chunks.push(e.data);
-    mr.onstop=()=>{ state.currentAudioUrl=URL.createObjectURL(new Blob(chunks,{type:"audio/webm"})); stream.getTracks().forEach(t=>t.stop()); render(); };
-    mr.start(); state.mediaRecorder=mr; state.recording=true; state.elapsed=0; state.currentTranscript="";
-    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-    if(SR){
-      const sc=SCENARIOS[state.idx];
-      const rec=new SR();
-      rec.continuous=true; rec.interimResults=true;
-      rec.lang=sc.lang;
-      let ft="";
-      rec.onresult=e=>{ let interim=""; for(let i=e.resultIndex;i<e.results.length;i++){ if(e.results[i].isFinal) ft+=e.results[i][0].transcript+" "; else interim+=e.results[i][0].transcript; } state.currentTranscript=ft+interim; const box=document.getElementById("transcript-box"); if(box) box.textContent=state.currentTranscript||""; };
-      rec.start(); state.recognition=rec;
-    }
-    state.timer=setInterval(()=>{ state.elapsed++; const l=document.getElementById("rec-label"); const es=SCENARIOS[state.idx].lang.startsWith("es"); if(l) l.textContent=(es?"Grabando · ":"Recording · ")+fmt(state.elapsed); },1000);
-    render();
-  } catch(e) { alert("Necesitamos acceso al micrófono. Habilitalo en tu navegador."); }
-}
-function stopRecording() { clearInterval(state.timer); state.recording=false; if(state.mediaRecorder&&state.mediaRecorder.state==="recording") state.mediaRecorder.stop(); if(state.recognition) state.recognition.stop(); }
-function resetRecording() { state.currentTranscript=""; state.currentAudioUrl=null; delete state.responses[SCENARIOS[state.idx].id]; render(); }
-
-function renderDashboard() {
-  const candidates=getCandidates();
-  const approved=candidates.filter(c=>c.decision==="approved").length;
-  const pending=candidates.filter(c=>c.decision==="pending").length;
-  const rejected=candidates.filter(c=>c.decision==="rejected").length;
-  let html=`<div class="dashboard"><div class="dash-header"><div><div class="dash-title">Candidatos</div><div class="dash-sub">${approved} para entrevistar · ${pending} pendientes · ${rejected} descartados</div></div><div class="dash-count">${candidates.length}</div></div>`;
-  if(candidates.length===0){
-    html+=`<div class="empty-state"><div class="empty-title">Sin candidatos todavía.</div><div class="empty-desc">Cambiá a la vista "Candidato", completá el screening y volvé acá para ver los resultados.</div></div>`;
-  } else {
-    html+=`<div class="candidates-list">`;
-    candidates.forEach((c,ci)=>{
-      const answered=Object.values(c.responses||{}).filter(Boolean).length;
-      const dec=c.decision||"pending";
-      const decLabel=dec==="approved"?"Entrevistar":dec==="rejected"?"Descartado":"Pendiente";
-      html+=`<div class="c-row"><div class="c-summary" onclick="toggleCandidate(${ci})"><div class="c-avatar">${initials(c.name)}</div><div><div class="c-name">${esc(c.name)}</div><div class="c-email">${esc(c.email)}</div></div><div class="c-meta">${c.role?`<span class="c-tag">${esc(c.role)}</span>`:""}<span class="c-tag">${answered}/${SCENARIOS.length} resp.</span><span class="c-tag">${new Date(c.completedAt).toLocaleDateString("es-AR")}</span><span class="badge badge-${dec}" id="badge-${ci}">${decLabel}</span></div><span class="expand-arrow" id="arrow-${ci}">▼</span></div><div class="c-detail" id="detail-${ci}"><div class="resp-grid">`;
-      SCENARIOS.forEach((sc,si)=>{
-        const resp=c.responses?.[sc.id];
-        html+=`<div class="resp-block"><div class="resp-header"><div class="resp-num">${si+1}</div><div class="resp-sc-title">${esc(sc.title)}</div><div class="resp-sc-tag">${esc(sc.tag)} · ${sc.lang.startsWith("es")?"ES":"EN"}</div></div>`;
-        if(resp){ html+=`<div class="resp-transcript">${resp.transcript?esc(resp.transcript):`<span class="resp-no-data">Sin transcripción</span>`}</div>`; if(resp.audioUrl) html+=`<div class="resp-audio-label">Audio bruto</div><audio class="resp-audio" controls src="${resp.audioUrl}"></audio>`; else html+=`<div class="resp-no-data">Sin audio</div>`; }
-        else html+=`<div class="resp-no-data">Sin respuesta</div>`;
-        html+=`</div>`;
-      });
-      html+=`</div><div class="decision-row"><span class="decision-label">Decisión:</span><button class="btn-d btn-d-approve" onclick="setDecision('${esc(c.email)}','approved',${ci})">✓ Entrevistar</button><button class="btn-d btn-d-reject" onclick="setDecision('${esc(c.email)}','rejected',${ci})">✗ Descartar</button><button class="btn-d btn-d-pend" onclick="setDecision('${esc(c.email)}','pending',${ci})">— Pendiente</button></div></div></div>`;
-    });
-    html+=`</div>`;
-  }
-  html+=`</div>`;
-  document.getElementById("dashboard-content").innerHTML=html;
-}
-function toggleCandidate(ci){ document.getElementById("detail-"+ci).classList.toggle("open"); document.getElementById("arrow-"+ci).classList.toggle("open"); }
-function setDecision(email,decision,ci){ updateDecision(email,decision); renderDashboard(); }
-
+function renderDone(){return '<div class="done-view"><p class="eyebrow" style="margin-bottom:24px">Aerolab Pre-screening</p><h2 class="done-title">GRACIAS,<br/><span class="acc">'+esc(state.name.split(" ")[0].toUpperCase())+'.</span></h2><p class="page-desc" style="margin-top:20px">Recibimos tus respuestas. Las vamos a revisar y te contactamos pronto.</p></div>'}
+function startScreening(){state.step="scenario";state.idx=0;state.currentTranscript="";state.currentAudioUrl=null;render()}
+function saveCurrentResponse(){const sc=SCENARIOS[state.idx];if(state.currentAudioUrl||state.currentTranscript)state.responses[sc.id]={transcript:state.currentTranscript,audioUrl:state.currentAudioUrl}}
+function prevScenario(){saveCurrentResponse();state.idx--;state.currentTranscript="";state.currentAudioUrl=null;render()}
+function nextScenario(){saveCurrentResponse();if(state.idx<SCENARIOS.length-1){state.idx++;state.currentTranscript="";state.currentAudioUrl=null;render()}else{saveCandidate({name:state.name,email:state.email,role:state.role,responses:state.responses,completedAt:new Date().toISOString(),decision:"pending"});state.step="done";render()}}
+async function startRecording(){try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});const mr=new MediaRecorder(stream);const chunks=[];mr.ondataavailable=e=>chunks.push(e.data);mr.onstop=()=>{state.currentAudioUrl=URL.createObjectURL(new Blob(chunks,{type:"audio/webm"}));stream.getTracks().forEach(t=>t.stop());render()};mr.start();state.mediaRecorder=mr;state.recording=true;state.elapsed=0;state.currentTranscript="";const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(SR){const sc=SCENARIOS[state.idx];const rec=new SR();rec.continuous=true;rec.interimResults=true;rec.lang=sc.lang;let ft="";rec.onresult=e=>{let interim="";for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)ft+=e.results[i][0].transcript+" ";else interim+=e.results[i][0].transcript}state.currentTranscript=ft+interim;const box=document.getElementById("transcript-box");if(box)box.textContent=state.currentTranscript||""};rec.start();state.recognition=rec}state.timer=setInterval(()=>{state.elapsed++;const l=document.getElementById("rec-label");const es=SCENARIOS[state.idx].lang.startsWith("es");if(l)l.textContent=(es?"Grabando · ":"Recording · ")+fmt(state.elapsed)},1000);render()}catch(e){alert("Necesitamos acceso al microfono.")}}
+function stopRecording(){clearInterval(state.timer);state.recording=false;if(state.mediaRecorder&&state.mediaRecorder.state==="recording")state.mediaRecorder.stop();if(state.recognition)state.recognition.stop()}
+function resetRecording(){state.currentTranscript="";state.currentAudioUrl=null;delete state.responses[SCENARIOS[state.idx].id];render()}
 render();
-updateTabCount();
 </script>
 </body>
 </html>
